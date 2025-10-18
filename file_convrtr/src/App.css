@@ -1,0 +1,480 @@
+/*
+ * file_convrtr/src/App.css
+ * FINAL Centered and Responsive Standard CSS
+ */
+
+/* --- Root Variables and Base Styles --- */
+
+:root {
+    --primary-blue: #3B82F6;
+    --light-bg: #f9fafb;
+    --light-card-bg: white;
+    --light-text: #1f2937;
+    --light-border: #d1d5db;
+    --gray-600: #4b5563; 
+    --gray-300: #d1d5db; /* Lighter gray for table border/separator */
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background-color: var(--light-bg);
+    color: var(--light-text);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* --- Dark Mode Styles --- */
+body.dark-mode {
+    --primary-blue: #60a5fa;
+    --light-bg: #111827; /* Darker background to match screenshot */
+    --light-card-bg: #1f2937; /* Darker card */
+    --light-text: #f3f4f6;
+    --light-border: #4b5563;
+    --gray-600: #9ca3af; 
+    --gray-300: #4b5563; /* Darker border in dark mode */
+    background-color: var(--light-bg);
+    color: var(--light-text);
+}
+
+/* --- App Container (Fixes the uneven, stuck-to-left look) --- */
+.app-container {
+    min-height: 100vh;
+}
+
+/* --- Header --- */
+.main-header {
+    background-color: var(--light-card-bg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-content {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem; 
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+/* Header Logo and Title */
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; 
+}
+
+.logo-image { 
+    width: 32px; 
+    height: 32px;
+    object-fit: contain; 
+    display: block;
+}
+.logo-icon {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+}
+
+.header-app-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--light-text);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Dark Mode Toggle */
+.dark-mode-toggle {
+    padding: 0.5rem;
+    border: 1px solid var(--light-border);
+    border-radius: 50%;
+    background-color: var(--light-card-bg); 
+    color: var(--light-text);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 38px; 
+    height: 38px;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+}
+.dark-mode-toggle:hover {
+    background-color: var(--light-border);
+}
+
+
+/* Dropzone OR Separator */
+.dropzone-or {
+    font-size: 1rem;
+    color: var(--gray-600);
+    margin: 0.5rem 0;
+}
+
+/* Static Options (Pills) for Empty State */
+.static-options-display {
+    text-align: center; 
+    margin-top: 3rem;
+}
+
+/* NEW: General Section Title Styling */
+.section-title {
+    font-size: 1.25rem; /* Matches the "Conversion Queue" h2 */
+    font-weight: 600;
+    color: var(--light-text);
+    margin-bottom: 1.5rem; /* Increased margin for better separation */
+    text-align: left; /* Aligned with other content */
+    margin-left: auto; /* Used with max-width to center block-level element */
+    margin-right: auto;
+    max-width: 800px; /* Aligns with main-content width */
+}
+
+
+.format-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center; 
+}
+
+.format-pill {
+    background-color: var(--light-card-bg); 
+    border: 1px solid var(--light-border);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px; 
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--light-text);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+/* Dark Mode adjustment for pills */
+body.dark-mode .format-pill {
+    background-color: var(--light-card-bg);
+    border-color: var(--light-border);
+    color: var(--light-text);
+}
+
+
+/* --- Main Content (CRITICAL CENTERING FIX) --- */
+.main-content {
+    max-width: 800px; 
+    margin: 0 auto; 
+    padding: 3rem 1.5rem 5rem; 
+    text-align: center; 
+}
+
+/* --- Typography --- */
+.page-main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--light-text);
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--gray-600);
+    margin-bottom: 3rem; 
+}
+
+
+/* --- Dropzone (Responsive) --- */
+.dropzone {
+    width: 100%;
+    background-color: var(--light-card-bg);
+    padding: 3rem; 
+    border: 3px dashed var(--light-border);
+    border-radius: 12px;
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    text-align: center;
+    display: inline-block; 
+}
+
+/* Desktop/Laptop Adjustments */
+@media (min-width: 768px) {
+    .dropzone {
+        padding: 5rem;
+    }
+}
+
+.dropzone-text {
+    font-size: 1.1rem;
+    color: var(--light-text);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.dropzone.drag-active {
+    border-color: var(--primary-blue);
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.browse-btn {
+    background-color: var(--primary-blue);
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.browse-btn:hover {
+    background-color: #2563EB;
+}
+
+/* --- Keyframe for Spinning Animation --- */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- Conversion Queue & Progress Card --- */
+.conversion-queue {
+    text-align: left; 
+    margin-top: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.conversion-queue h2 {
+    /* Now uses .section-title class */
+    margin-bottom: 1rem; /* Kept for specificity if needed, but .section-title overrides */
+}
+
+
+.progress-card {
+    background-color: var(--light-card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    border: 1px solid var(--light-border);
+}
+
+/* Progress Card Content Styles */
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.file-name {
+    font-weight: 500;
+    color: var(--light-text);
+    flex-grow: 1; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 0.5rem; 
+}
+
+/* NEW: Loading Logo Styling */
+.loading-logo {
+    width: 28px; 
+    height: 28px;
+    animation: spin 1.5s linear infinite;
+    flex-shrink: 0;
+}
+
+/* File Status (Used when NOT loading) */
+.file-status {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+}
+
+/* Status Colors */
+.status-pending {
+    background-color: #fef3c7; 
+    color: #b45309; 
+}
+.status-uploading, .status-converting {
+    background-color: #bfdbfe; 
+    color: #1e40af; 
+}
+.status-complete {
+    background-color: #d1fae5; 
+    color: #065f46; 
+}
+.status-error {
+    background-color: #fecaca; 
+    color: #991b1b; 
+}
+
+/* Progress Bar */
+.progress-bar-container {
+    background-color: var(--light-border);
+    border-radius: 4px;
+    height: 25px; 
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.progress-bar {
+    height: 8px;
+    position: absolute;
+    bottom: 0; 
+    width: 100%; 
+    background-color: var(--primary-blue);
+    border-radius: 4px;
+    transition: width 0.3s ease-out;
+}
+
+.progress-percentage {
+    position: absolute;
+    left: 0; 
+    top: 0; 
+    
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    
+    padding-left: 0.25rem; 
+}
+
+/* Progress Actions */
+.progress-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.format-select {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--light-border);
+    border-radius: 6px;
+    background-color: var(--light-card-bg);
+    color: var(--light-text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.format-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+    background-color: var(--light-bg);
+}
+
+/* Action Button (Convert/Download) */
+.action-btn {
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-decoration: none; 
+    text-align: center;
+    display: inline-block;
+}
+
+.convert-btn {
+    background-color: var(--primary-blue);
+    color: white;
+}
+.convert-btn:hover {
+    background-color: #2563EB;
+}
+
+.download-btn {
+    background-color: #10b981; 
+    color: white;
+}
+.download-btn:hover {
+    background-color: #059669;
+}
+
+.error-message {
+    color: #991b1b; 
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* --- NEW: Recent Conversions Table Styles --- */
+.recent-conversions-section {
+    margin-top: 3rem; /* Space from the content above */
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left; /* Align text within the section */
+}
+
+/* Container for the table to apply card-like styling */
+.recent-conversions-table-container {
+    background-color: var(--light-card-bg);
+    border: 1px solid var(--light-border);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow-x: auto; /* Enable horizontal scrolling for small screens */
+}
+
+.recent-conversions-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove double borders */
+    font-size: 0.9rem;
+}
+
+.recent-conversions-table th,
+.recent-conversions-table td {
+    padding: 0.9rem 1.25rem; /* Adjusted padding to match screenshot */
+    text-align: left;
+    border-bottom: 1px solid var(--gray-300); /* Separator lines */
+}
+
+.recent-conversions-table th {
+    background-color: var(--light-bg); /* Lighter background for header */
+    color: var(--gray-600);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Dark mode adjustments for table header */
+body.dark-mode .recent-conversions-table th {
+    background-color: #1f2937; /* Darker bg for header in dark mode */
+    color: var(--gray-600);
+}
+
+.recent-conversions-table td {
+    color: var(--light-text);
+}
+
+/* Remove bottom border from the last row */
+.recent-conversions-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Download link in table */
+.table-download-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.table-download-link:hover {
+    text-decoration: underline;
+    color: #2563EB; /* Darker blue on hover */
+}

@@ -1,0 +1,15 @@
+/* src/index.css (Minimal Global Styles) */
+
+/* Import the Inter font globally if needed, though it's best placed in index.html */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap'); */
+
+/* Global reset for consistent styling */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Ensure React root fills the viewport */
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
