@@ -5,6 +5,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 require('dotenv').config(); // Use .env file for secrets/ports
 
@@ -27,7 +28,15 @@ const io = new Server(server, {
 });
 
 // 3. File Upload Setup (using multer for temporary storage)
-const uploadDir = path.join(__dirname, 'uploads'); // Temp folder for uploads
+const uploadDir = path.join(__dirname, 'uploads');
+const convertedDir = path.join(__dirname, 'converted');
+
+[uploadDir, convertedDir].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+});
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, uploadDir);

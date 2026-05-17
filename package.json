@@ -1,0 +1,14 @@
+{
+  "name": "full-stack-converter",
+  "version": "1.0.0",
+  "description": "Unified runner for File Converter",
+  "scripts": {
+    "install-all": "npm install && cd file_convrtr && npm install && cd ../file_convrtr_backend && npm install",
+    "dev": "concurrently \"npm run dev-frontend\" \"npm run dev-backend\"",
+    "dev-frontend": "cd file_convrtr && npm run dev",
+    "dev-backend": "cd file_convrtr_backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
