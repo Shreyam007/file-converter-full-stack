@@ -1,8 +1,13 @@
 const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+const ffprobePath = require('ffprobe-static').path;
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
 const { PDFDocument } = require('pdf-lib');
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
 
 const convertedDir = path.join(__dirname, 'converted');
 if (!fs.existsSync(convertedDir)) {
