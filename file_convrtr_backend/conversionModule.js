@@ -22,7 +22,7 @@ const getToolType = (filePath, targetExt) => {
     const ext = path.extname(filePath).toLowerCase().replace('.', '');
     const mediaExtensions = ['mp4', 'mp3', 'wav', 'avi', 'mkv', 'webm', 'ogg', 'aac', 'flac'];
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
-    const textExtensions = ['txt', 'cpp', 'js', 'py', 'java', 'c', 'h', 'css', 'html', 'json', 'md'];
+    const textExtensions = ['txt', 'csv', 'md', 'json', 'js', 'html', 'css', 'py', 'java', 'cpp', 'c', 'h', 'log', 'xml'];
     
     if (targetExt === 'pdf') {
         if (imageExtensions.includes(ext)) return 'image-to-pdf';
@@ -38,6 +38,7 @@ const getToolType = (filePath, targetExt) => {
         if (targetExt === 'pdf') return 'docx-to-pdf';
     }
     if (textExtensions.includes(ext) && targetExt === 'docx') return 'text-to-docx';
+    if (textExtensions.includes(ext) && targetExt === 'txt') return 'text-to-txt';
 
     if (imageExtensions.includes(ext) && imageExtensions.includes(targetExt)) return 'sharp';
     if (mediaExtensions.includes(ext) || mediaExtensions.includes(targetExt)) return 'ffmpeg';
@@ -183,6 +184,10 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
             });
             const buffer = await Packer.toBuffer(doc);
             fs.writeFileSync(outputPath, buffer);
+            emitComplete();
+
+        } else if (toolType === 'text-to-txt') {
+            fs.copyFileSync(filePath, outputPath);
             emitComplete();
 
         } else {

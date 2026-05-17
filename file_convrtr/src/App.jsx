@@ -26,27 +26,35 @@ const FILE_STATUS = {
 
 // Helper to get available targets based on file extension
 const getAvailableFormats = (fileName) => {
-    if (!fileName) return ['PDF', 'DOCX', 'JPG', 'PNG'];
+    if (!fileName) return ['PDF', 'DOCX', 'JPG', 'PNG', 'MP4', 'MP3'];
     const ext = fileName.split('.').pop().toLowerCase();
+    
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
-    const videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'webm'];
-    const audioExtensions = ['mp3', 'wav', 'ogg', 'aac', 'flac'];
-    const documentExtensions = ['pdf', 'docx', 'doc', 'pptx', 'xlsx', 'txt'];
+    const videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv'];
+    const audioExtensions = ['mp3', 'wav', 'ogg', 'aac', 'flac', 'm4a'];
+    const textExtensions = ['txt', 'csv', 'md', 'json', 'js', 'html', 'css', 'py', 'java', 'cpp', 'c', 'h', 'log', 'xml'];
 
     if (imageExtensions.includes(ext)) {
-        return ['PDF', 'JPG', 'PNG', 'WEBP'];
+        return ['JPG', 'PNG', 'WEBP', 'GIF', 'BMP', 'PDF'];
     }
     if (videoExtensions.includes(ext)) {
-        return ['MP4', 'MP3', 'AVI', 'MKV'];
+        return ['MP4', 'AVI', 'MKV', 'WEBM', 'MP3', 'WAV', 'GIF'];
     }
     if (audioExtensions.includes(ext)) {
-        return ['MP3', 'WAV', 'OGG', 'AAC'];
+        return ['MP3', 'WAV', 'OGG', 'AAC', 'FLAC'];
     }
-    if (documentExtensions.includes(ext)) {
+    if (ext === 'pdf') {
+        return ['TXT', 'DOCX'];
+    }
+    if (ext === 'docx') {
+        return ['PDF', 'TXT'];
+    }
+    if (textExtensions.includes(ext)) {
         return ['PDF', 'DOCX', 'TXT'];
     }
-    // Default fallback
-    return ['PDF', 'DOCX', 'JPG', 'PNG'];
+    
+    // Absolute fallback for unknown files to try text-extraction
+    return ['TXT', 'PDF'];
 };
 
 // --- Component: Loading Spinner based on the Logo ---
