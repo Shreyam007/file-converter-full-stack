@@ -261,7 +261,8 @@ function App() {
         const formData = new FormData();
         formData.append('file', fileToConvert.file);
         formData.append('targetFormat', fileToConvert.targetFormat);
-        formData.append('socketId', socketId);
+        formData.append('socketId', socket.id);
+        formData.append('fileId', fileId);
 
         updateFile(fileId, { status: FILE_STATUS.UPLOADING });
 
