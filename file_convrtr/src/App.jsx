@@ -174,6 +174,10 @@ function App() {
     }, []);
 
     useEffect(() => {
+        if (socket.connected) {
+            setSocketId(socket.id);
+        }
+
         socket.on('connect', () => {
             setSocketId(socket.id);
         });
