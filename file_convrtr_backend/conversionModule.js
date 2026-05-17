@@ -132,7 +132,8 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
         } else if (toolType === 'pdf-to-text') {
             const dataBuffer = fs.readFileSync(filePath);
             const data = await pdfParse(dataBuffer);
-            fs.writeFileSync(outputPath, data.text);
+            const extractedText = data.text || 'No extractable text found in this document.';
+            fs.writeFileSync(outputPath, extractedText);
             emitComplete();
 
         } else if (toolType === 'pdf-to-docx') {
@@ -141,10 +142,11 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
             const data = await pdfParse(dataBuffer);
             io.to(socketId).emit('progress', { fileId, percentage: 60 });
             
+            const extractedText = data.text || 'No extractable text found in this document.';
             const doc = new Document({
                 sections: [{
                     properties: {},
-                    children: data.text.split('\n').map(line => new Paragraph({ children: [new TextRun(line)] }))
+                    children: extractedText.split('\n').map(line => new Paragraph({ children: [new TextRun(line)] }))
                 }]
             });
             const buffer = await Packer.toBuffer(doc);

@@ -273,8 +273,7 @@ function App() {
                     updateFile(fileId, { progress: percentCompleted });
                 }
             });
-            // Status updates to 'Converting' are handled by Socket.IO 'progress' or backend logic
-            updateFile(fileId, { status: FILE_STATUS.CONVERTING, progress: 0 });
+            // Status updates to 'Converting' are fully handled by backend Socket.IO events now to prevent race conditions.
         } catch (error) {
             console.error('Upload Error:', error);
             updateFile(fileId, { 
