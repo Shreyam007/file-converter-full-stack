@@ -57,13 +57,12 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
         return res.status(400).send('No file uploaded.');
     }
 
-    const { targetFormat, socketId, fileId } = req.body;
+    const { targetFormat, fileId } = req.body;
 
     // Start conversion in the background
     conversionModule.startConversion(
         req.file.path, 
         targetFormat, 
-        socketId, 
         fileId, 
         io
     );

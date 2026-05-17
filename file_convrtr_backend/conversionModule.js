@@ -46,7 +46,7 @@ const getToolType = (filePath, targetExt) => {
     return 'unsupported';
 };
 
-async function startConversion(filePath, targetFormat, socketId, fileId, io) {
+async function startConversion(filePath, targetFormat, fileId, io) {
     const targetExt = targetFormat.toLowerCase();
     const toolType = getToolType(filePath, targetExt);
     
@@ -59,7 +59,7 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
     console.log(`Starting conversion: ${fileId} to ${targetExt} using ${toolType}`);
 
     const emitComplete = () => {
-        io.to(socketId).emit('conversion-complete', { 
+        io.emit('conversion-complete', { 
             fileId, 
             downloadUrl, 
             fileName: outputFileName,
@@ -73,29 +73,29 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
     try {
         if (toolType === 'image-to-pdf') {
             const imageBuffer = await sharp(filePath).png().toBuffer();
-            io.to(socketId).emit('progress', { fileId, percentage: 30 });
+            io.emit('progress', { fileId, percentage: 30 });
             
             const pdfDoc = await PDFDocument.create();
             const pngImage = await pdfDoc.embedPng(imageBuffer);
-            io.to(socketId).emit('progress', { fileId, percentage: 60 });
+            io.emit('progress', { fileId, percentage: 60 });
             
             const { width, height } = pngImage.scale(1);
             const page = pdfDoc.addPage([width, height]);
             page.drawImage(pngImage, { x: 0, y: 0, width, height });
             const pdfBytes = await pdfDoc.save();
             fs.writeFileSync(outputPath, pdfBytes);
-            io.to(socketId).emit('progress', { fileId, percentage: 90 });
+            io.emit('progress', { fileId, percentage: 90 });
             emitComplete();
 
         } else if (toolType === 'text-to-pdf') {
             const content = fs.readFileSync(filePath, 'utf8');
-            io.to(socketId).emit('progress', { fileId, percentage: 20 });
+            io.emit('progress', { fileId, percentage: 20 });
             
             const pdfDoc = await PDFDocument.create();
             const page = pdfDoc.addPage();
             const { height } = page.getSize();
             
-            io.to(socketId).emit('progress', { fileId, percentage: 50 });
+            io.emit('progress', { fileId, percentage: 50 });
             
             page.drawText(content, {
                 x: 50,
@@ -104,7 +104,7 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
             });
             const pdfBytes = await pdfDoc.save();
             fs.writeFileSync(outputPath, pdfBytes);
-            io.to(socketId).emit('progress', { fileId, percentage: 80 });
+            io.emit('progress', { fileId, percentage: 80 });
             emitComplete();
 
         } else if (toolType === 'sharp') {
@@ -115,7 +115,7 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
             ffmpeg(filePath)
                 .toFormat(targetExt)
                 .on('progress', (progress) => {
-                    io.to(socketId).emit('progress', {
+                    io.emit('progress', {
                         fileId: fileId,
                         percentage: Math.floor(progress.percent || 0)
                     });
@@ -125,7 +125,7 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
                 })
                 .on('error', (err) => {
                     console.error('FFmpeg error:', err.message);
-                    io.to(socketId).emit('conversion-error', { fileId, message: 'FFmpeg failed: ' + err.message });
+                    io.emit('conversion-error', { fileId, message: 'FFmpeg failed: ' + err.message });
                     fs.unlink(filePath, () => {});
                 })
                 .save(outputPath);
@@ -138,10 +138,10 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
             emitComplete();
 
         } else if (toolType === 'pdf-to-docx') {
-            io.to(socketId).emit('progress', { fileId, percentage: 30 });
+            io.emit('progress', { fileId, percentage: 30 });
             const dataBuffer = fs.readFileSync(filePath);
             const data = await pdfParse(dataBuffer);
-            io.to(socketId).emit('progress', { fileId, percentage: 60 });
+            io.emit('progress', { fileId, percentage: 60 });
             
             const extractedText = data.text || 'No extractable text found in this document.';
             const doc = new Document({
@@ -152,7 +152,7 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
             });
             const buffer = await Packer.toBuffer(doc);
             fs.writeFileSync(outputPath, buffer);
-            io.to(socketId).emit('progress', { fileId, percentage: 90 });
+            io.emit('progress', { fileId, percentage: 90 });
             emitComplete();
 
         } else if (toolType === 'docx-to-text') {
@@ -162,16 +162,16 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
 
         } else if (toolType === 'docx-to-pdf') {
             // Very rudimentary docx to pdf fallback (via text extraction)
-            io.to(socketId).emit('progress', { fileId, percentage: 30 });
+            io.emit('progress', { fileId, percentage: 30 });
             const result = await mammoth.extractRawText({ path: filePath });
             
-            io.to(socketId).emit('progress', { fileId, percentage: 60 });
+            io.emit('progress', { fileId, percentage: 60 });
             const pdfDoc = await PDFDocument.create();
             const page = pdfDoc.addPage();
             page.drawText(result.value.substring(0, 3000), { x: 50, y: page.getSize().height - 50, size: 12 }); // Limits to first page roughly for basic support
             const pdfBytes = await pdfDoc.save();
             fs.writeFileSync(outputPath, pdfBytes);
-            io.to(socketId).emit('progress', { fileId, percentage: 90 });
+            io.emit('progress', { fileId, percentage: 90 });
             emitComplete();
 
         } else if (toolType === 'text-to-docx') {
@@ -195,7 +195,7 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
         }
     } catch (err) {
         console.error('Conversion catch error:', err.message);
-        io.to(socketId).emit('conversion-error', { fileId, message: err.message });
+        io.emit('conversion-error', { fileId, message: err.message });
         fs.unlink(filePath, () => {});
     }
 }
