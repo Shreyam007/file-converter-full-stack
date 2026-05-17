@@ -7,7 +7,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 
 // --- Connection Setup ---
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const BACKEND_URL = 'https://file-converter-full-stack.onrender.com';
 const socket = io(BACKEND_URL);
 
 
