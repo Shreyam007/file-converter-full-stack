@@ -5,6 +5,9 @@ const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
 const { PDFDocument } = require('pdf-lib');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
+const { Document, Packer, Paragraph, TextRun } = require('docx');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
@@ -26,6 +29,16 @@ const getToolType = (filePath, targetExt) => {
         if (textExtensions.includes(ext)) return 'text-to-pdf';
     }
     
+    if (ext === 'pdf') {
+        if (targetExt === 'txt') return 'pdf-to-text';
+        if (targetExt === 'docx') return 'pdf-to-docx';
+    }
+    if (ext === 'docx') {
+        if (targetExt === 'txt') return 'docx-to-text';
+        if (targetExt === 'pdf') return 'docx-to-pdf';
+    }
+    if (textExtensions.includes(ext) && targetExt === 'docx') return 'text-to-docx';
+
     if (imageExtensions.includes(ext) && imageExtensions.includes(targetExt)) return 'sharp';
     if (mediaExtensions.includes(ext) || mediaExtensions.includes(targetExt)) return 'ffmpeg';
     
@@ -115,6 +128,60 @@ async function startConversion(filePath, targetFormat, socketId, fileId, io) {
                     fs.unlink(filePath, () => {});
                 })
                 .save(outputPath);
+
+        } else if (toolType === 'pdf-to-text') {
+            const dataBuffer = fs.readFileSync(filePath);
+            const data = await pdfParse(dataBuffer);
+            fs.writeFileSync(outputPath, data.text);
+            emitComplete();
+
+        } else if (toolType === 'pdf-to-docx') {
+            io.to(socketId).emit('progress', { fileId, percentage: 30 });
+            const dataBuffer = fs.readFileSync(filePath);
+            const data = await pdfParse(dataBuffer);
+            io.to(socketId).emit('progress', { fileId, percentage: 60 });
+            
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: data.text.split('\n').map(line => new Paragraph({ children: [new TextRun(line)] }))
+                }]
+            });
+            const buffer = await Packer.toBuffer(doc);
+            fs.writeFileSync(outputPath, buffer);
+            io.to(socketId).emit('progress', { fileId, percentage: 90 });
+            emitComplete();
+
+        } else if (toolType === 'docx-to-text') {
+            const result = await mammoth.extractRawText({ path: filePath });
+            fs.writeFileSync(outputPath, result.value);
+            emitComplete();
+
+        } else if (toolType === 'docx-to-pdf') {
+            // Very rudimentary docx to pdf fallback (via text extraction)
+            io.to(socketId).emit('progress', { fileId, percentage: 30 });
+            const result = await mammoth.extractRawText({ path: filePath });
+            
+            io.to(socketId).emit('progress', { fileId, percentage: 60 });
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage();
+            page.drawText(result.value.substring(0, 3000), { x: 50, y: page.getSize().height - 50, size: 12 }); // Limits to first page roughly for basic support
+            const pdfBytes = await pdfDoc.save();
+            fs.writeFileSync(outputPath, pdfBytes);
+            io.to(socketId).emit('progress', { fileId, percentage: 90 });
+            emitComplete();
+
+        } else if (toolType === 'text-to-docx') {
+            const content = fs.readFileSync(filePath, 'utf8');
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: content.split('\n').map(line => new Paragraph({ children: [new TextRun(line)] }))
+                }]
+            });
+            const buffer = await Packer.toBuffer(doc);
+            fs.writeFileSync(outputPath, buffer);
+            emitComplete();
 
         } else {
             throw new Error(`Conversion from ${path.extname(filePath)} to ${targetExt} is not supported yet.`);
