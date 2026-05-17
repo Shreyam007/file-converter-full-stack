@@ -6,8 +6,8 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import io from 'socket.io-client';
 
-// --- Mock/Placeholder Setup ---
-const BACKEND_URL = 'http://localhost:3000';
+// --- Connection Setup ---
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 const socket = io(BACKEND_URL);
 
 
@@ -270,10 +270,11 @@ function App() {
             });
             // Status updates to 'Converting' are handled by Socket.IO 'progress' or backend logic
             updateFile(fileId, { status: FILE_STATUS.CONVERTING, progress: 0 });
-        } catch {
+        } catch (error) {
+            console.error('Upload Error:', error);
             updateFile(fileId, { 
                 status: FILE_STATUS.ERROR, 
-                errorMessage: 'Upload failed' 
+                errorMessage: `Upload failed: ${error.message}` 
             });
         }
     };

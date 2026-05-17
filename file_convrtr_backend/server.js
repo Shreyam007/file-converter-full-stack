@@ -13,17 +13,17 @@ const app = express();
 const server = http.createServer(app);
 
 // 1. CORS Configuration (Allow frontend access)
-const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173']; // Add your Vercel/Netlify URL later
+// Using '*' allows any origin to connect, preventing CORS issues during local testing or deployed environments
 app.use(cors({
-    origin: allowedOrigins,
-    methods: ['GET', 'POST']
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE']
 }));
 
 // 2. Setup Socket.IO for Real-Time
 const io = new Server(server, {
     cors: {
-        origin: allowedOrigins,
-        methods: ['GET', 'POST']
+        origin: '*',
+        methods: ['GET', 'POST', 'OPTIONS']
     }
 });
 
